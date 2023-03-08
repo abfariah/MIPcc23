@@ -68,20 +68,20 @@ class MIPBandit(NormalBandit):
         instance_path = os.path.join(self.base_folder, self.MIPinstance)
         self.model = scip.Model()
         self.model.readProblem(instance_path)
-        self.model.setRealParam("limits/time", self.time_limit)
+        self.model.setRealParam("limits/time", self.time_limit - 1)
 
     def generate_reward(self, i: int):
 
         ## Set parameters (g, k) for influence branching
         action = self.actions[i]
         graph, max_depth = action
-        print("[ACTION]", action)
+        print("[ACTION] : ", action)
 
-        if self.model.getNvars() < 25000:
+        if self.model.getNVars() < 25000:
             branchrule = InfluenceBranching(graph, max_depth)
         else:
             if max_depth == 5:
-                max_depth +=3
+                max_depth += 3
             branchrule = SparsInfluenceBranching(graph, max_depth)
 
         self.model.includeBranchrule(
@@ -165,6 +165,7 @@ class Solver(object):
             self.counts[i] += 1
             self.actions.append(i)
             # self.update_regret(i)
+
 
 class UCB1(Solver):
     def __init__(self, bandit, mu_0=1.0):

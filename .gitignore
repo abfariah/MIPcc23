@@ -1,1 +1,3 @@
 examples/julia_example/Manifest.toml 
+src/__pycache__/
+src/solutions

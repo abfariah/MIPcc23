@@ -114,7 +114,6 @@ class InfluenceBranching(scip.Branchrule):
         """
         # compute b
         b, lhs_idx, rhs_idx = self.get_b()
-
         # objective
         denom = np.std(c)
         if denom > 1e-5:
@@ -151,7 +150,7 @@ class InfluenceBranching(scip.Branchrule):
         Standardize pb and return the standardized data
         """
         A, c = self.get_matrices()
-        if self.test_normalize:
+        if self.test_normalize():
             A, b, c = self.std_matrices(A, c)
             return A, b, c
         else:
