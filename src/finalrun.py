@@ -2,8 +2,8 @@ import os
 import sys
 from BandMIP import MIPBandit, ThompsonSamplingNorm
 
-ACTIONS = [("count", 4), ("base", 4), ("bindual", 1), ("bindual", 3), ("dual", 4)]
-MU_0, SIGMA = 1, 0.3
+ACTIONS = [("count", 1), ("count", 5), ("countdual", 2), ("base", 3), ("dual", 3)]
+MU_0, SIGMA = 0.9, 0.2
 N_INSTANCES = 50
 
 meta_file = sys.argv[-1]

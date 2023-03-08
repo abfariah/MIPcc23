@@ -8,6 +8,7 @@ from datetime import datetime
 
 from utils import compute_dual_gap
 from InfluenceBranching import InfluenceBranching
+from SparsInfluenceBranching import SparsInfluenceBranching
 
 
 def ind_min(x):
@@ -53,8 +54,8 @@ class MIPBandit(NormalBandit):
         self.actions = params["actions"]
         self.time_limit = params["time limit"]
         n = self.actions.__len__()
-        mus = [1.0] * n
-        sigma = 0.3
+        mus = [0.9] * n
+        sigma = 0.2
         super(MIPBandit, self).__init__(n, mus, sigma)
 
     def read_instance(self):
@@ -71,14 +72,17 @@ class MIPBandit(NormalBandit):
 
     def generate_reward(self, i: int):
 
-        ## Set parameters
+        ## Set parameters (g, k) for influence branching
         action = self.actions[i]
         graph, max_depth = action
         print("[ACTION]", action)
-        branchrule = InfluenceBranching(
-            graph,
-            max_depth,
-        )
+
+        if self.model.getNvars() < 25000:
+            branchrule = InfluenceBranching(graph, max_depth)
+        else:
+            if max_depth == 5:
+                max_depth +=3
+            branchrule = SparsInfluenceBranching(graph, max_depth)
 
         self.model.includeBranchrule(
             branchrule=branchrule,
@@ -90,9 +94,10 @@ class MIPBandit(NormalBandit):
         )
 
         # optimize
-        # model.hideOutput()
+        self.model.hideOutput()
         self.model.optimize()
 
+        # compute reward
         dual_gap = compute_dual_gap(self.model)
         solving_time = self.model.getSolvingTime()
         nofeas = (self.model.getStatus() == "infeasible") * 1.0
@@ -159,8 +164,7 @@ class Solver(object):
             i = self.run_one_step()
             self.counts[i] += 1
             self.actions.append(i)
-            # self.update_regret(i)     # No regret for tests ?
-
+            # self.update_regret(i)
 
 class UCB1(Solver):
     def __init__(self, bandit, mu_0=1.0):
@@ -237,8 +241,6 @@ class ThompsonSamplingNorm(Solver):
         print("[END] : ", datetime.now().isoformat())
 
         self.bandit.write_solutions()
-
-        breakpoint()
 
         return i
 

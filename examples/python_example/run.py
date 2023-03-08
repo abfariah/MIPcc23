@@ -17,15 +17,17 @@ if not os.path.isfile(meta_file):
     exit()
 
 # read instances from meta file
-instances = all_lines[7:len(all_lines)]
+instances = all_lines[7 : len(all_lines)]
 print("number of instances:", len(instances))
 
 # read time limit from meta file
-time_limit = int(all_lines[0].split(' ')[-1])
+time_limit = int(all_lines[0].split(" ")[-1])
 
 model = pyscipopt.Model("reoptimization")
 
-solution_folder = os.path.join("solutions/", os.path.basename(os.path.splitext(meta_file)[0]))
+solution_folder = os.path.join(
+    "solutions/", os.path.basename(os.path.splitext(meta_file)[0])
+)
 
 if not os.path.isdir(solution_folder):
     os.mkdir(solution_folder)
@@ -57,7 +59,7 @@ for instance in instances:
     # write solution to instance_name.sol in 'solutions' directory
     if model.getNSols() > 0:
         sol = model.getBestSol()
-        with open(os.path.join(solution_folder, f"{instance_base}.sol"), 'w') as f:
+        with open(os.path.join(solution_folder, f"{instance_base}.sol"), "w") as f:
             for j in range(model.getNVars()):
                 v = model.getVars()[j]
                 name = v.name
