@@ -111,19 +111,16 @@ class MIPBandit(NormalBandit):
         """
         print("[DUALBOUND]", self.model.getDualbound())
         if self.model.getNSols() > 0:
-            sol = self.model.getBestSol()
+            t = time.time()
             with open(
-                os.path.join(self.solution_folder, f"{self.instance_base[:-7]}.sol"),
+                os.path.join(self.solution_folder, f"{self.instance_base[:-7]}_b.sol"),
                 "w",
             ) as f:
-                for j in range(self.model.getNVars()):
-                    v = self.model.getVars()[j]
-                    name = v.name
-                    val = sol[v]
-                    f.write(name)
-                    f.write("    ")
-                    f.write(str(val))
-                    f.write("\n")
+                self.model.writeBestSol(f.name, write_zeros=False)
+
+            t2 = time.time() - t
+            print("[Writing time] : ", t2)
+
         else:
             print("No solution found")
 
