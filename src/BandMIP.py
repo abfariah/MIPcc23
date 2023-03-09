@@ -67,6 +67,7 @@ class MIPBandit(NormalBandit):
         print("[INSTANCE]", self.instance_base)
         instance_path = os.path.join(self.base_folder, self.MIPinstance)
         self.model = scip.Model()
+        self.model.hideOutput()
         self.model.readProblem(instance_path)
         self.model.setRealParam("limits/time", self.time_limit - 1)
 
@@ -94,7 +95,6 @@ class MIPBandit(NormalBandit):
         )
 
         # optimize
-        self.model.hideOutput()
         self.model.optimize()
 
         # compute reward
@@ -111,16 +111,18 @@ class MIPBandit(NormalBandit):
         """
         print("[DUALBOUND]", self.model.getDualbound())
         if self.model.getNSols() > 0:
-            t = time.time()
             with open(
-                os.path.join(self.solution_folder, f"{self.instance_base[:-7]}_b.sol"),
+                os.path.join(self.solution_folder, f"{self.instance_base[:-7]}.sol"),
                 "w",
             ) as f:
-                self.model.writeBestSol(f.name, write_zeros=False)
-
-            t2 = time.time() - t
-            print("[Writing time] : ", t2)
-
+                # self.model.writeBestSol(f.name, write_zeros=False)
+                vars = self.model.getVars(transformed=False)
+                for v in vars:
+                    solval = self.model.getVal(v)
+                    if abs(solval) > 1e-10:
+                        if abs(solval - 1) < 1e-10:
+                            solval = 1
+                        f.write(v.name + "    " + str(solval) + "\n")
         else:
             print("No solution found")
 
