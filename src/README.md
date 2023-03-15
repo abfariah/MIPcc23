@@ -1,18 +1,27 @@
 ![MIP Workshop 2023](mip-2023-logo.png "MIP Workshop 2023")
 # MIPcc23: The MIP Workshop 2023 Computational Competition
 
-[About](#about) | [Challenge Topic](#challenge) | [Call for Benchmarks](#benchmarks) | [Rules](#rules) | [Awards](#awards) | [Important Dates](#timeline) | [Documentation and Support](#doc) | [Organizing Committee](#committee)
+## <a id="Instructions"></a>Instructions 
 
-## <a id="Instructions"></a>Instructions
+### Activate conda env
 
-My mipcomp.sh file can be called from the src directory.
-First, as I am using a conda environment for python dependencies management, the command :
+My mipcomp.sh file can be called from the src directory.   
+First, as conda environment is used for python dependencies management, the command :
+```python
+conda activate bb4
+```
 
-$ conda activate bb4$
 
-muste be run. Then, to evaluate for instance my script on obj 2 series, one could run :
+muste be run.    
 
-$ sh mipcomp.sh home/paul/MIPcc23/datasets/testfiles/obj_series_2.test$
+### Evaluation
+Then, to evaluate for instance the script on obj 2 series, one could run :
+
+```python
+sh mipcomp.sh home/paul/MIPcc23/datasets/testfiles/obj_series_2.test
+```
+
+Of course, any other absolute path to a ``series.test`` file can be provided.
 
 
 
