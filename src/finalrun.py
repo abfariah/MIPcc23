@@ -32,7 +32,7 @@ solution_folder = os.path.join(
 if not os.path.isdir(solution_folder):
     os.mkdir(solution_folder)
 
-base_folder = os.path.dirname("../")
+base_folder = os.path.join(os.path.dirname(meta_file), "../..")
 
 series_params = {
     "solution folder": solution_folder,
