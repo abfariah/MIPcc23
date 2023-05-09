@@ -72,13 +72,12 @@ class MIPBandit(NormalBandit):
         self.model.setRealParam("limits/time", self.time_limit - 1)
 
     def generate_reward(self, i: int):
-
         ## Set parameters (g, k) for influence branching
         action = self.actions[i]
         graph, max_depth = action
         print("[ACTION] : ", action)
 
-        if self.model.getNVars() < 25000:
+        if self.model.getNVars() < 30000:
             branchrule = InfluenceBranching(graph, max_depth)
         else:
             if max_depth == 5:
@@ -356,7 +355,6 @@ class UCB2(UCB1):
         self.rho[i] += 1
 
     def select_arm(self):
-
         # play each arm once
         for x in range(self.bandit.n):
             if self.counts[x] == 0:

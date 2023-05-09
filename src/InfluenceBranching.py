@@ -37,7 +37,7 @@ class InfluenceBranching(scip.Branchrule):
             vars_dict[f"{var}"] = idx
         return vars_dict
 
-    def get_true_A(self) -> np.array:
+    def get_true_A(self) -> np.ndarray:
         """
         Partially vectorized version
         Retrieves matrix A
@@ -58,7 +58,7 @@ class InfluenceBranching(scip.Branchrule):
             A_true = np.empty((0, self.n))
         return A_true
 
-    def get_matrices(self) -> Tuple[np.array, np.array]:
+    def get_matrices(self) -> Tuple[np.ndarray, np.ndarray]:
         """
         From a pyscipopt model, get the matrices c, A and b
         such that the program is written max cx s.t. Ax <= b
@@ -80,7 +80,7 @@ class InfluenceBranching(scip.Branchrule):
         A = self.get_true_A()
         return A, c
 
-    def get_b(self) -> np.array:
+    def get_b(self) -> Tuple:
         """
         Compute the vector b used for normalization from linear constraints
         """
@@ -106,9 +106,9 @@ class InfluenceBranching(scip.Branchrule):
 
     def std_matrices(
         self,
-        A: np.array,
-        c: np.array,
-    ) -> Tuple[np.array, np.array, np.array]:
+        A: np.ndarray,
+        c: np.ndarray,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Standardize the problem data.
         """
@@ -145,7 +145,7 @@ class InfluenceBranching(scip.Branchrule):
             self.normalize = True
         return self.normalize
 
-    def std_model(self) -> Tuple[np.array, np.array, np.array]:
+    def std_model(self) -> Tuple:
         """
         Standardize pb and return the standardized data
         """
@@ -156,7 +156,7 @@ class InfluenceBranching(scip.Branchrule):
         else:
             return A, None, c
 
-    def symmetrizeGraph(self, W: np.array):
+    def symmetrizeGraph(self, W: np.ndarray):
         return (W + W.T) * 0.5
 
     def get_primal_dual_values(self):
@@ -166,7 +166,7 @@ class InfluenceBranching(scip.Branchrule):
         )
         return x_primal, y_dual
 
-    def get_W(self) -> np.array:
+    def get_W(self) -> np.ndarray:
         A_bool = (self.A != 0) * 1.0
         if self.graph == "count":
             W = np.matmul(A_bool.T, A_bool) * 1.0
@@ -238,7 +238,7 @@ class InfluenceBranching(scip.Branchrule):
         if len(self.variables) == sum(binary_variables):
             self.obj_1 = True
 
-    def get_best_candidate(self, action_set: np.array) -> np.array:
+    def get_best_candidate(self, action_set: np.ndarray) -> np.ndarray:
         """
         Get best action in action set in terms of influence
         taking into account previous branching descisions
@@ -312,8 +312,6 @@ if __name__ == "__main__":
         branchrule = InfluenceBranching(
             args.graph,
             args.max_depth,
-            args.seed,
-            verbose=args.verbose,
         )
         model.includeBranchrule(
             branchrule=branchrule,
@@ -323,8 +321,11 @@ if __name__ == "__main__":
             maxdepth=args.max_depth - 1,  # max depth
             maxbounddist=1,
         )
-    # model.hideOutput()
-    model.optimize()
-    if args.ibra == 1:
+        # model.hideOutput()
+        model.optimize()
         print("Nombre de runs : ", branchrule.n_run)
         print("Nombre d'appels : ", branchrule.n_call)
+
+    else:
+        # model.hideOutput()
+        model.optimize()
